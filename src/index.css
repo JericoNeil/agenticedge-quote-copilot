@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 4%;
+    --foreground: 210 40% 95%;
+    --card: 220 20% 7%;
+    --muted: 220 15% 12%;
+    --muted-foreground: 215 15% 55%;
+    --accent: 186 72% 42%;
+    --accent-foreground: 0 0% 100%;
+    --border: 220 15% 14%;
+    --surface-subtle: 220 20% 6%;
+    --surface-elevated: 220 20% 9%;
+    --warn: 38 92% 55%;
+    --ok: 152 60% 45%;
+    --radius: 0.5rem;
+  }
+
+  html { color-scheme: dark; }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  .scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scroll-thin::-webkit-scrollbar-track { background: transparent; }
+  .scroll-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 999px;
+  }
+}
+
+/* Entrance animations.
+   These are CSS keyframes rather than JavaScript driven animations on purpose.
+   A JavaScript animation loop is paused while the window is hidden or
+   unfocused, which can leave an element stranded at its initial opacity of
+   zero, or leave a dismissed overlay behind as an invisible click blocker.
+   Because these declare "both" as the fill mode, the element always ends at
+   the final frame even if the animation never gets a chance to run. That
+   matters here: this prototype is recorded on screen, and a panel that stays
+   invisible would ruin the take.
+
+   For the same reason ae-rise and ae-slide move the element without touching
+   opacity. A frozen animation then leaves the element fully visible and merely
+   a few pixels out of place, which nobody notices, instead of leaving it
+   invisible. Opacity is only animated on the backdrop and on the soft fade,
+   where the worst case is an undimmed background. */
+@layer utilities {
+  @keyframes ae-rise {
+    from {
+      transform: translateY(8px);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes ae-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes ae-fade-soft {
+    from {
+      opacity: 0.35;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes ae-slide {
+    from {
+      transform: translateX(40px);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  .ae-rise,
+  [data-ae="rise"] {
+    animation: ae-rise 380ms ease-out both;
+  }
+
+  .ae-fade,
+  [data-ae="fade"] {
+    animation: ae-fade 250ms ease-out both;
+  }
+
+  .ae-fade-soft {
+    animation: ae-fade-soft 350ms ease-out both;
+  }
+
+  .ae-slide-in,
+  [data-ae="slide"] {
+    animation: ae-slide 300ms ease-out both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ae-rise,
+    .ae-fade,
+    .ae-fade-soft,
+    .ae-slide-in,
+    [data-ae] {
+      animation-duration: 1ms;
+    }
+  }
+}
